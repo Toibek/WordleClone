@@ -1,10 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
+using System.Collections.Generic;
 public static class Words
 {
-    public static List<string> words = new List<string>()
+    public static bool Contains(string word)
+    {
+        for (int i = 0; i < All.Length; i++)
+            if (All[i][0] == word[0] && All[i] == word) return true;
+        return false;
+    }
+    public static string RandomWord()
+    {
+        return All[Random.Range(0, All.Length)];
+    }
+    public static string[] All = new string[]
     {
 "rossa",
 "jetty",

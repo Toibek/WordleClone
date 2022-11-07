@@ -22,13 +22,14 @@ public class Letter : MonoBehaviour
         UpdateVisuals();
         _text.text = "";
     }
-    public void SetLetter(string letter)
+    public void SetLetter(char letter)
     {
-        _text.text = letter;
+        _text.text = letter.ToString().ToUpper();
     }
     public void SetState(letterState state)
     {
         _currentState = state;
+        UpdateVisuals();
     }
     void UpdateVisuals()
     {

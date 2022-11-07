@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class Keyboard : MonoBehaviour
 {
+    internal GameManager manager;
     string[] LetterRows = { "qwertyuiop", "asdfghjkl", "zxcvbnm" };
 
-    Dictionary<char, Key> buttons = new();
+    [SerializeField] Dictionary<char, Key> buttons = new();
 
     private void Start()
     {
@@ -25,19 +26,18 @@ public class Keyboard : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.anyKeyDown && Input.inputString != "")
-            sendLetter(Input.inputString[0]);
+        if (Input.anyKeyDown)
+        {
+            if (Input.GetKeyDown(KeyCode.Backspace))
+                Remove();
+            else if (Input.GetKeyDown(KeyCode.Return))
+                Submit();
+            else if (Input.inputString != "")
+                SendLetter(Input.inputString[0]);
+        }
     }
-    public void sendLetter(char c)
-    {
-        Debug.Log(c);
-    }
-    public void Submit()
-    {
-
-    }
-    public void Remove()
-    {
-
-    }
+    public void SendLetter(char c) { manager.SetLetter(c); }
+    public void Submit() { manager.Submit(); }
+    public void Remove() { manager.RemoveLetter(); }
+    public void SetLettersState(char c, letterState state) { buttons[c].SetState(state); }
 }

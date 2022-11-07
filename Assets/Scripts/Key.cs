@@ -27,7 +27,7 @@ public class Key : MonoBehaviour
     }
     public void SetLetter(char c)
     {
-        _text.text = c.ToString();
+        _text.text = c.ToString().ToUpper();
         _character = c;
     }
     public void SetState(letterState state)
@@ -37,7 +37,7 @@ public class Key : MonoBehaviour
     }
     private void SendLetter()
     {
-        Keyboard.sendLetter(_character);
+        Keyboard.SendLetter(_character);
     }
     private void UpdateVisuals()
     {
