@@ -1,0 +1,1 @@
+public enum letterState { Default = 0, Wrong = 1, WrongPlace = 2, Correct = 3 }

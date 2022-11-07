@@ -22,11 +22,11 @@ public class Letter : MonoBehaviour
         UpdateVisuals();
         _text.text = "";
     }
-    public void setLetter(string letter)
+    public void SetLetter(string letter)
     {
         _text.text = letter;
     }
-    public void setState(letterState state)
+    public void SetState(letterState state)
     {
         _currentState = state;
     }
@@ -35,6 +35,4 @@ public class Letter : MonoBehaviour
         _background.color = _colors[(int)_currentState];
         _text.color = _textColors[(int)_currentState];
     }
-
-    public enum letterState { Default = 0, Wrong = 1, WrongPlace = 2, Correct = 3 }
 }
