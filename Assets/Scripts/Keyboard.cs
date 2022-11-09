@@ -36,6 +36,13 @@ public class Keyboard : MonoBehaviour
                 SendLetter(Input.inputString[0]);
         }
     }
+    public void Clear()
+    {
+        foreach (var key in buttons)
+        {
+            key.Value.SetState(letterState.Default);
+        }
+    }
     public void SendLetter(char c) { manager.SetLetter(c); }
     public void Submit() { manager.Submit(); }
     public void Remove() { manager.RemoveLetter(); }

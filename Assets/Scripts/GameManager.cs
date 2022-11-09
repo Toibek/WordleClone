@@ -12,12 +12,33 @@ public class GameManager : MonoBehaviour
     private Transform _textParent;
     private Keyboard _keyboard;
 
+    [Tooltip("0: Default, 1:Wrong , 2: WrongPlace, 3:Correct")]
+    public Color[] Colors;
+    [Tooltip("0: Default, 1:Wrong , 2: WrongPlace, 3:Correct")]
+    public Color[] TextColors;
+
     [SerializeField] private string _wordToGuess;
     [SerializeField] private string _currentGuess;
 
     [SerializeField] Transform PopTf;
     [SerializeField] Transform WinTf;
     [SerializeField] Transform LosTf;
+
+    public static GameManager Instance;
+    #region singleton
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(this);
+    }
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+    #endregion
     void Start()
     {
         _textParent = transform.GetChild(0);
@@ -35,11 +56,18 @@ public class GameManager : MonoBehaviour
     }
     public void ClearAll()
     {
+        WinTf.gameObject.SetActive(false);
+        LosTf.gameObject.SetActive(false);
+        PopTf.gameObject.SetActive(false);
+        _keyboard.Clear();
         for (int r = 0; r < _rowCount; r++)
         {
             SetRow(r);
             for (int l = 0; l < _activeRow.Length; l++)
+            {
                 _activeRow[l].SetLetter(' ');
+                _activeRow[l].SetState(letterState.Default);
+            }
         }
     }
     public void SetRow(int row)
@@ -53,8 +81,8 @@ public class GameManager : MonoBehaviour
     }
     public void Submit()
     {
-        if (_currentGuess.Length < 5) { Debug.Log("Too Short"); return; }
-        if (!Words.Contains(_currentGuess.ToLower())) { Debug.Log("Word not in library"); return; }
+        if (_currentGuess.Length < 5) { StartCoroutine(Popup("Word too short")); return; }
+        if (!Words.Contains(_currentGuess.ToLower())) { StartCoroutine(Popup("Word not in library")); return; }
         Debug.Log("Valid word");
         int correct = 0;
         for (int i = 0; i < _currentGuess.Length; i++)
@@ -76,9 +104,9 @@ public class GameManager : MonoBehaviour
                 _keyboard.SetLettersState(_currentGuess[i], letterState.Wrong);
             }
         }
-        if (correct == _currentGuess.Length) { Debug.Log("Game Won"); return; }
+        if (correct == _currentGuess.Length) { WinTf.gameObject.SetActive(true); return; }
 
-        if (++_row >= _rowCount) { Debug.Log("Game Lost"); return; }
+        if (++_row >= _rowCount) { LosTf.gameObject.SetActive(true); return; }
         SetRow(_row);
     }
     public void SetLetter(char c)
@@ -93,10 +121,17 @@ public class GameManager : MonoBehaviour
         _activeRow[--_letter].SetLetter(' ');
         _currentGuess = _currentGuess[0..^1];
     }
+    public IEnumerator Popup(string message)
+    {
+        PopTf.GetComponentInChildren<TMPro.TMP_Text>().text = message;
+        PopTf.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        PopTf.gameObject.SetActive(false);
+    }
     public void Restart()
     {
         ClearAll();
         StartGame();
     }
-    
+
 }

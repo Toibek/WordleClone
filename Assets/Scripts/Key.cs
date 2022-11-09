@@ -6,22 +6,21 @@ using TMPro;
 
 public class Key : MonoBehaviour
 {
-    [Tooltip("0: Default, 1:Wrong , 2: WrongPlace, 3:Correct")]
-    [SerializeField] private Color[] _colors;
-    [Tooltip("0: Default, 1:Wrong , 2: WrongPlace, 3:Correct")]
-    [SerializeField] private Color[] _textColors;
-    [SerializeField] private letterState _currentState = letterState.Default;
-
     internal Keyboard Keyboard;
+    private Color[] _colors;
+    private Color[] _textColors;
+    private letterState _currentState = letterState.Default;
     private char _character;
 
     Image _background;
     TMP_Text _text;
 
-    private void Start()
+    private void Awake()
     {
         _background = GetComponent<Image>();
         _text = GetComponentInChildren<TMP_Text>();
+        _colors = GameManager.Instance.Colors;
+        _textColors = GameManager.Instance.TextColors;
         GetComponent<Button>().onClick.AddListener(SendLetter);
         UpdateVisuals();
     }
