@@ -115,7 +115,12 @@ public class GameManager : MonoBehaviour
                 _keyboard.SetLettersState(wordArr[i], letterState.Wrong);
             }
         }
-        if (++_row >= _rowCount) { LosTf.gameObject.SetActive(true); return; }
+        if (++_row >= _rowCount)
+        {
+            LosTf.gameObject.SetActive(true);
+            LosTf.GetChild(1).GetComponentInChildren<TMPro.TMP_Text>().text = "The word was: " + _wordToGuess;
+            return;
+        }
         SetRow(_row);
     }
     public void SetLetter(char c)

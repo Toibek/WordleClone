@@ -48,9 +48,9 @@ public class Letter : MonoBehaviour
         AnimationCurve animCurve = GameManager.Instance.AnimationCurve;
         for (float f = 0; f < animTime; f += Time.deltaTime)
         {
-            transform.localScale = Vector2.one * (1 - (animCurve.Evaluate(f / animTime) * 0.2f));
+            transform.localScale = Vector2.one * (1 - (animCurve.Evaluate(f / animTime) * 0.1f));
             yield return new WaitForEndOfFrame();
         }
-        transform.localScale = Vector2.one * 0.8f;
+        transform.localScale = Vector2.one * 0.9f;
     }
 }
