@@ -31,9 +31,14 @@ public class Key : MonoBehaviour
     }
     public void SetState(letterState state)
     {
+        if (_currentState != letterState.Wrong && state == letterState.Wrong)
+            StartCoroutine(Shrink());
+        else if (state == letterState.Default) transform.localScale = Vector2.one;
+
         _currentState = state;
         UpdateVisuals();
     }
+    public letterState GetState() => _currentState;
     private void SendLetter()
     {
         Keyboard.SendLetter(_character);
@@ -42,5 +47,16 @@ public class Key : MonoBehaviour
     {
         _background.color = _colors[(int)_currentState];
         _text.color = _textColors[(int)_currentState];
+    }
+    IEnumerator Shrink()
+    {
+        float animTime = GameManager.Instance.AnimationTime;
+        AnimationCurve animCurve = GameManager.Instance.AnimationCurve;
+        for (float f = 0; f < animTime; f += Time.deltaTime)
+        {
+            transform.localScale = Vector2.one * (1 - (animCurve.Evaluate(f / animTime) * 0.2f));
+            yield return new WaitForEndOfFrame();
+        }
+        transform.localScale = Vector2.one * 0.8f;
     }
 }

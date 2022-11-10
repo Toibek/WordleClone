@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     private int _row = 0;
     private int _letter = 0;
 
-    private int _rowCount = 5;
+    private int _rowCount;
     private Letter[] _activeRow;
     private Transform _textParent;
     private Keyboard _keyboard;
@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
     public Color[] Colors;
     [Tooltip("0: Default, 1:Wrong , 2: WrongPlace, 3:Correct")]
     public Color[] TextColors;
+
+    public AnimationCurve AnimationCurve;
+    public float AnimationTime;
 
     [SerializeField] private string _wordToGuess;
     [SerializeField] private string _currentGuess;
@@ -41,10 +44,9 @@ public class GameManager : MonoBehaviour
     #endregion
     void Start()
     {
+        _rowCount = transform.childCount + 1;
         _textParent = transform.GetChild(0);
         _keyboard = transform.GetChild(1).GetComponent<Keyboard>();
-        _keyboard.manager = this;
-
         StartGame();
     }
     public void StartGame()
@@ -81,31 +83,38 @@ public class GameManager : MonoBehaviour
     }
     public void Submit()
     {
-        if (_currentGuess.Length < 5) { StartCoroutine(Popup("Word too short")); return; }
+        if (_currentGuess.Length < _wordToGuess.Length) { StartCoroutine(Popup("Word too short")); return; }
         if (!Words.Contains(_currentGuess.ToLower())) { StartCoroutine(Popup("Word not in library")); return; }
-        Debug.Log("Valid word");
+
+        char[] wordArr = _currentGuess.ToCharArray();
+
         int correct = 0;
-        for (int i = 0; i < _currentGuess.Length; i++)
+        for (int i = 0; i < wordArr.Length; i++)
         {
-            if (_currentGuess[i] == _wordToGuess[i])
+            if (wordArr[i] == _wordToGuess[i])
             {
                 correct++;
                 _activeRow[i].SetState(letterState.Correct);
                 _keyboard.SetLettersState(_currentGuess[i], letterState.Correct);
-            }
-            else if (_wordToGuess.Contains(_currentGuess[i]))
-            {
-                _activeRow[i].SetState(letterState.WrongPlace);
-                _keyboard.SetLettersState(_currentGuess[i], letterState.WrongPlace);
-            }
-            else
-            {
-                _activeRow[i].SetState(letterState.Wrong);
-                _keyboard.SetLettersState(_currentGuess[i], letterState.Wrong);
+                wordArr[i] = ' ';
             }
         }
         if (correct == _currentGuess.Length) { WinTf.gameObject.SetActive(true); return; }
 
+        for (int i = 0; i < wordArr.Length; i++)
+        {
+            if (wordArr[i] == ' ') continue;
+            if (_wordToGuess.Contains(wordArr[i]))
+            {
+                _activeRow[i].SetState(letterState.WrongPlace);
+                _keyboard.SetLettersState(wordArr[i], letterState.WrongPlace);
+            }
+            else
+            {
+                _activeRow[i].SetState(letterState.Wrong);
+                _keyboard.SetLettersState(wordArr[i], letterState.Wrong);
+            }
+        }
         if (++_row >= _rowCount) { LosTf.gameObject.SetActive(true); return; }
         SetRow(_row);
     }

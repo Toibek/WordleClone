@@ -4,23 +4,21 @@ using UnityEngine;
 
 public class Keyboard : MonoBehaviour
 {
-    internal GameManager manager;
-    string[] LetterRows = { "qwertyuiop", "asdfghjkl", "zxcvbnm" };
-
-    [SerializeField] Dictionary<char, Key> buttons = new();
+    private string[] _letterRows = { "qwertyuiop", "asdfghjkl", "zxcvbnm" };
+    private Dictionary<char, Key> _buttons = new();
 
     private void Start()
     {
-        List<Key>[] keys = new List<Key>[LetterRows.Length];
+        List<Key>[] keys = new List<Key>[_letterRows.Length];
         Key[] first = transform.GetChild(0).GetComponentsInChildren<Key>();
         for (int r = 0; r < keys.Length; r++)
         {
             keys[r] = new List<Key>(transform.GetChild(r).GetComponentsInChildren<Key>());
             for (int k = 0; k < keys[r].Count; k++)
             {
-                keys[r][k].SetLetter(LetterRows[r][k]);
+                keys[r][k].SetLetter(_letterRows[r][k]);
                 keys[r][k].Keyboard = this;
-                buttons.Add(LetterRows[r][k], keys[r][k]);
+                _buttons.Add(_letterRows[r][k], keys[r][k]);
             }
         }
     }
@@ -38,13 +36,13 @@ public class Keyboard : MonoBehaviour
     }
     public void Clear()
     {
-        foreach (var key in buttons)
+        foreach (var key in _buttons)
         {
             key.Value.SetState(letterState.Default);
         }
     }
-    public void SendLetter(char c) { manager.SetLetter(c); }
-    public void Submit() { manager.Submit(); }
-    public void Remove() { manager.RemoveLetter(); }
-    public void SetLettersState(char c, letterState state) { buttons[c].SetState(state); }
+    public void SendLetter(char c) { GameManager.Instance.SetLetter(c); }
+    public void Submit() { GameManager.Instance.Submit(); }
+    public void Remove() { GameManager.Instance.RemoveLetter(); }
+    public void SetLettersState(char c, letterState state) { if (state == letterState.Default || state > _buttons[c].GetState()) _buttons[c].SetState(state); }
 }
