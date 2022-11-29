@@ -44,8 +44,8 @@ public class GameManager : MonoBehaviour
     #endregion
     void Start()
     {
-        _rowCount = transform.childCount + 1;
         _textParent = transform.GetChild(0);
+        _rowCount = _textParent.childCount;
         _keyboard = transform.GetChild(1).GetComponent<Keyboard>();
         StartGame();
     }
@@ -81,6 +81,7 @@ public class GameManager : MonoBehaviour
         _letter = 0;
         _currentGuess = "";
     }
+    [ContextMenu("Thing")]
     public void Submit()
     {
         if (_currentGuess.Length < _wordToGuess.Length) { StartCoroutine(Popup("Word too short")); return; }
